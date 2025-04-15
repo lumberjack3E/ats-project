@@ -10,9 +10,11 @@ This is the main FastAPI application for the NWVIT Resume Compatibility Tool.
 
 #### AARON DO THIS FIRST DUMMY ####
 
-# Windows PowerShell:cd "C:\Users\aaron\OneDrive\Desktop\NWVIT\ats-project" 
+#Developer Setup Notes
+# In Terminal
+# cd ./ats-project
 # .\venv\Scripts\Activate.ps1
-# Server reset :uvicorn main:app --reload
+# uvicorn main:app --reload
 
 # Test Location
 # http://127.0.0.1:8000/docs

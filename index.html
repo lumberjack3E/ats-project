@@ -68,11 +68,14 @@
 <label for="resumeFile">Upload Resume (.txt, .docx)</label><br>
 <input type="file" id="resumeFile" accept=".txt,.docx"><br><br>
 
-<label for="resume">Paste Your Resume</label><br>
-<textarea id="resume" placeholder="Paste resume here..." autofocus></textarea>
+<label for="resume">Upload or Paste Your Resume</label><br>
+<textarea id="resume" placeholder="Upload or paste resume here..." autofocus></textarea>
 
-<label for="jd">Paste the Job Description</label><br>
-<textarea id="jd" placeholder="Paste job description here..."></textarea>
+<label for "jdFile">Upload Job Description (.txt, .docx)</label><br>
+<input type="file" id="jdFile" accept=".txt, .docx"><br><br>
+
+<label for="jd">Upload or Paste the Job Description</label><br>
+<textarea id="jd" placeholder="Upload or paste job description here..."></textarea>
 
 <button onclick="analyze()">Analyze</button>
 <button onclick="resetFields()">Reset</button>
@@ -111,6 +114,7 @@
         document.getElementById('results').innerHTML = "";
         document.getElementById('resumeFile').value = "";
         document.getElementById('resume').focus();
+        document.getElementById('jdFile').value = "";
     }
 // Listen for file uploads to the resume file input
     document.getElementById('resumeFile').addEventListener('change', function (){
@@ -143,6 +147,37 @@
 // Unsupported file type message
         alert("Unsupported file type. Please upload a .txt or .docx file.");
        }
+    });
+//Listen for file uploads to the job description file input
+    document.getElementById('jdFile').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+// Get the file extension (e.g. .txt or .docx)
+        const ext = file.name.split('.').pop().toLowerCase();
+
+        if (ext === "txt") {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                document.getElementById('jd').value = text;
+            };
+            reader.readAsText(file);
+        } else if (ext === "docx") {
+// Mammoth conversion
+            file.arrayBuffer().then(function (buffer){
+                mammoth.extractRawText({ arrayBuffer: buffer })
+                    .then(function (result) {
+                        document.getElementById('jd').value = result.value;
+                    })
+                    .catch(function (err){
+                        alert("Error reading file: " + err.message);
+                    });
+            });
+        } else {
+// Unsupported File Type
+            alert("Unsupported file type. Please upload a .txt or .docx file.");
+        }
     });
 
 </script>

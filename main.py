@@ -23,6 +23,9 @@ from pydantic import BaseModel
 import re
 import string
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 # Utility Functions
 def clean_text(text):
     # Normalize common smart/Word characters
@@ -38,6 +41,15 @@ def clean_text(text):
 
 #Create and instance of FastAPI - this will serve as our main app
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In development, allow everything
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 #Define what is expected in the POST request
 class ResumeAnalysisRequest(BaseModel):

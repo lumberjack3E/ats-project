@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <style>
         body {
@@ -58,8 +59,12 @@
     <meta charset="UTF-8">
     <title>NWVIT Resume Analyzer</title>
 </head>
+
 <body>
 <h1>NWVIT Resume Compatibility Tool</h1>
+
+<label for="resumeFile">Upload Resume (.txt)</label><br>
+<input type="file" id="resumeFile" accept=".txt"><br><br>
 
 <label for="resume">Paste Your Resume</label><br>
 <textarea id="resume" placeholder="Paste resume here..." autofocus></textarea>
@@ -100,8 +105,21 @@
         document.getElementById('resume').value = "";
         document.getElementById('jd').value = "";
         document.getElementById('results').innerHTML = "";
+        document.getElementById('resumeFile').value = "";
         document.getElementById('resume').focus();
     }
+
+    document.getElementById('resumeFile').addEventListener('change', function (){
+        const file = this.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            document.getElementById('resume').value = text;
+        };
+        reader.readAsText(file);
+    });
 
 </script>
 </body>

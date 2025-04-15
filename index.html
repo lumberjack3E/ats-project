@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <style>
         body {
             font-family: sans-serif;
@@ -58,13 +59,14 @@
 
     <meta charset="UTF-8">
     <title>NWVIT Resume Analyzer</title>
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 </head>
 
 <body>
 <h1>NWVIT Resume Compatibility Tool</h1>
 
-<label for="resumeFile">Upload Resume (.txt)</label><br>
-<input type="file" id="resumeFile" accept=".txt"><br><br>
+<label for="resumeFile">Upload Resume (.txt, .docx)</label><br>
+<input type="file" id="resumeFile" accept=".txt,.docx"><br><br>
 
 <label for="resume">Paste Your Resume</label><br>
 <textarea id="resume" placeholder="Paste resume here..." autofocus></textarea>
@@ -113,12 +115,29 @@
         const file = this.files[0];
         if (!file) return;
 
+       const ext = file.name.split('.').pop().toLowerCase();
+
+       if (ext == "txt") {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const text = e.target.result;
             document.getElementById('resume').value = text;
+        
         };
         reader.readAsText(file);
+       } else if (ext === "docx") {
+        file.arrayBuffer().then(function (buffer) {
+            mammoth.extractRawText({arrayBuffer: buffer})
+                .then(function (result) {
+                    document.getElementById('resume').value = result.value;
+                })
+                .catch(function (err) {
+                    alert("Error reading .docx file: " + err.message);
+                });
+        });
+       } else {
+        alert("Unsupported file type. Please upload a .txt or .docx file.");
+       }
     });
 
 </script>

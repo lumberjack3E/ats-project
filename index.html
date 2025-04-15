@@ -60,19 +60,20 @@
     <meta charset="UTF-8">
     <title>NWVIT Resume Analyzer</title>
     <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
 
 <body>
 <h1>NWVIT Resume Compatibility Tool</h1>
 
-<label for="resumeFile">Upload Resume (.txt, .docx)</label><br>
-<input type="file" id="resumeFile" accept=".txt,.docx"><br><br>
+<label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>
+<input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
 
 <label for="resume">Upload or Paste Your Resume</label><br>
 <textarea id="resume" placeholder="Upload or paste resume here..." autofocus></textarea>
 
-<label for "jdFile">Upload Job Description (.txt, .docx)</label><br>
-<input type="file" id="jdFile" accept=".txt, .docx"><br><br>
+<label for "jdFile">Upload Job Description (.txt, .docx, .pdf)</label><br>
+<input type="file" id="jdFile" accept=".txt, .docx, .pdf"><br><br>
 
 <label for="jd">Upload or Paste the Job Description</label><br>
 <textarea id="jd" placeholder="Upload or paste job description here..."></textarea>
@@ -107,20 +108,24 @@
             <p><strong>Missing Keywords:</strong> ${data.missing_keywords.join(', ')}</p>
         `;
     }
+
 // Clear all fields and reset form
     function resetFields() {
         document.getElementById('resume').value = "";
         document.getElementById('jd').value = "";
         document.getElementById('results').innerHTML = "";
+// Clear file inputs
         document.getElementById('resumeFile').value = "";
-        document.getElementById('resume').focus();
         document.getElementById('jdFile').value = "";
+// Refocus to resume box
+        document.getElementById('resume').focus();
     }
+
 // Listen for file uploads to the resume file input
     document.getElementById('resumeFile').addEventListener('change', function (){
         const file = this.files[0];
         if (!file) return;
-// Get the file extention (e.g. '.txt' or '.docx')
+// Get the file extention (e.g. '.txt', '.docx', '.pdf')
        const ext = file.name.split('.').pop().toLowerCase();
 
        if (ext == "txt") {
@@ -143,6 +148,33 @@
                     alert("Error reading .docx file: " + err.message);
                 });
         });
+    } else if (ext === "pdf") {
+        // PDF resume
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const typedarray = new Uint8Array(e.target.result);
+
+            pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf) {
+                let textPromises = [];
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    textPromises.push(
+                        pdf.getPage(i).then(function (page) {
+                            return page.getTextContent().then(function (content) {
+                                return content.items.map(item => item.str).join(" ");
+                            });
+                        })
+                    );
+                }
+
+                Promise.all(textPromises).then(function (pagesText) {
+                    const fullText = pagesText.join("\n\n");
+                    document.getElementById('resume').value = fullText;
+                });
+            });
+        };
+        reader.readAsArrayBuffer(file);
+        
        } else {
 // Unsupported file type message
         alert("Unsupported file type. Please upload a .txt or .docx file.");
@@ -153,7 +185,7 @@
         const file = this.files[0];
         if (!file) return;
 
-// Get the file extension (e.g. .txt or .docx)
+// Get the file extension (e.g. .txt, .docx, .pdf)
         const ext = file.name.split('.').pop().toLowerCase();
 
         if (ext === "txt") {
@@ -172,11 +204,36 @@
                     })
                     .catch(function (err){
                         alert("Error reading file: " + err.message);
-                    });
+                    })
             });
+        } else if (ext === "pdf") {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const typedarray = new Uint8Array(e.target.result);
+
+                pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf) {
+                    let textPromises = [];
+
+                    for(let i = 1; i <= pdf.numPages; i++) {
+                        textPromises.push(
+                            pdf.getPage(i).then(function (page) {
+                                return page.getTextContent().then(function (content) {
+                                    return content.items.map(item => item.str).join(" ");
+                                });
+                            })
+                        );
+                    }
+
+                    Promise.all(textPromises).then(function (pagesText){
+                        const fullText = pagesText.join("\n\n");
+                        document.getElementById('jd').value = fullText;
+                    });
+                });
+            };
+            reader.readAsArrayBuffer(file);
         } else {
 // Unsupported File Type
-            alert("Unsupported file type. Please upload a .txt or .docx file.");
+            alert("Unsupported file type. Please upload a .txt, .docx, or .pdf file.");
         }
     });
 

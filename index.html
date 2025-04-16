@@ -64,13 +64,19 @@
 </head>
 
 <body>
+
 <h1>NWVIT Resume Compatibility Tool</h1>
 
-<label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>
-<input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
+<!-- Resume Drag-and-Drop Zone -->
+ <div id="resumeDropZone" style="border: 2px dashed #aaa; padding: 1rem; text-align: center; margin-bottom: 1rem;">
+    <p>Drag & Drop Your Resume Here, or Use the Upload Button Below</p>
 
-<label for="resume">Upload or Paste Your Resume</label><br>
-<textarea id="resume" placeholder="Upload or paste resume here..." autofocus></textarea>
+    <label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>
+    <input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
+
+    <label for="resume">Upload of Paste Your Resume</label><br>
+    <textarea id="resume" placeholder="Upload or Paste Resume Here..." autofocus></textarea>
+ </div>
 
 <label for "jdFile">Upload Job Description (.txt, .docx, .pdf)</label><br>
 <input type="file" id="jdFile" accept=".txt, .docx, .pdf"><br><br>
@@ -120,6 +126,33 @@
 // Refocus to resume box
         document.getElementById('resume').focus();
     }
+
+// Handle drag-and-drop resume file upload
+    const resumeDropZone = document.getElementById('resumeDropZone');
+
+    resumeDropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        resumeDropZone.style.backgroundColor = '#e0f7fa'; //Provides Visual Feedback
+    });
+
+    resumeDropZone.addEventListener('dragleave', function () {
+        resumeDropZone.style.backgroundColor = ''; //Resets Background
+    });
+
+    resumeDropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        resumeDropZone.style.backgroundColor = '';
+
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+
+// Pass Dropped File to the Resume File Handler
+        document.getElementById('resumeFile').files = e.dataTransfer.files;
+        
+// Trigger "Change Event" to reuse existing logic
+        const changeEvent = new Event('change');
+        document.getElementById('resumeFile').dispatchEvent(changeEvent);
+    });
 
 // Listen for file uploads to the resume file input
     document.getElementById('resumeFile').addEventListener('change', function (){

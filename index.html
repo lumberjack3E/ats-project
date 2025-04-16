@@ -5,22 +5,24 @@
 
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Lato', sans-serif;
             max-width: 800px;
             margin: auto;
             padding: 2rem;
             background-color: #f9f9f9;
+            color: #333;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #225669; /*NWVIT Mountian Blue*/
         }
 
         label {
             font-weight: bold;
             display: block;
             margin-top: 1rem;
+            text-align: left;
         }
 
         textarea {
@@ -29,8 +31,12 @@
             margin-top: 0.5rem;
             margin-bottom: 1rem;
             padding: 0.5rem;
-            font-family: monospace;
+            font-family: 'Lato', sans-serif;
             font-size: 1rem;
+            font-style: italic;
+            color: #333;
+            box-sizing: border-box;
+            display: block;
         }
 
         button {
@@ -48,13 +54,29 @@
             background-color: #34495e;
         }
         
+        #logo-wrapper {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        #nwvit-logo {
+            max-width: 180px;
+            height: auto;
+            margin-top: 1rem;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #nwvit-logo:hover {
+            transform: scale(1.05);
+        }
+
         #resumeDropZone {
             width: 100%;
             box-sizing: border-box;
-            border: none;
             padding: 0;
-            text-align: center;
             margin: 0 0 1rem 0;
+            background-color: transparent;
+            border: none;
         }
 
         #results {
@@ -63,20 +85,103 @@
             margin-top: 2rem;
             background: #ffffff;
             padding: 1rem;
-            border: 1px solid #ccc;
+            border: 1px solid #225669;
             border-radius: 6px;
         }
+
+        p.tagline {
+            text-align: center;
+            color: #666;
+            margin-top: -0.5rem;
+            font-size: 1rem;
+        }
+
+/* ===================== Sidebar Navigation Styles ===================== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 220px;
+            background-color: #000;
+            color: #ccc;
+            padding-top: 2rem;
+            font-family: 'Lato', sans-serif;
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .menu-header {
+            color: #888;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-list li {
+            margin-bottom:  0.5rem;
+        }
+
+        .menu-list a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ccc;
+            text-decoration: none;
+            padding: 0.6rem 1.5rem;
+            transition: background 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .menu-list a:hover {
+            background-color: #1f1f1f;
+            color: #fff;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+        }
+
+        
+
     </style>
 
     <meta charset="UTF-8">
     <title>NWVIT Resume Analyzer</title>
     <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+
 </head>
 
 <body>
 
+<!-- ===================== Sidebar Navigation ===================== -->
+ <div class="sidebar">
+    <div class="menu-headder">MENU</div>
+    <ul class="menu-list">
+        <li><a href="#"><span class="icon">👤</span> Profile</a></li>
+        <li><a href="#"><span class="icon">💼</span> Jobs</a></li>
+        <li><a href="#"><span class="icon">⚙️</span> Settings</a></li>
+    </ul>
+ </div>
+
+<div id="logo-wrapper">
+    <a href="https://www.nwvit.org/" target="_blank">
+        <img src="images/nwvit-logo-dark.png" alt="NWVIT Logo" id="nwvit-logo">
+    </a>
+</div>
+
 <h1>NWVIT Resume Compatibility Tool</h1>
+<p class="tagline">Built by Veterans, for Veterans</p>
 
 <!-- Resume Drag-and-Drop Zone -->
  <div id="resumeDropZone">
@@ -92,7 +197,7 @@
 <label for "jdFile">Upload Job Description (.txt, .docx, .pdf)</label><br>
 <input type="file" id="jdFile" accept=".txt, .docx, .pdf"><br><br>
 --> 
-<label for="jd" style="display: block; text-align: center; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
+<label for="jd" style="display: block; text-align: left; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
 <textarea id="jd" placeholder="Paste job description here..."></textarea>
 
 <button onclick="analyze()">Analyze</button>

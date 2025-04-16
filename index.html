@@ -4,6 +4,7 @@
 <head>
 
     <style>
+/* ===================== Base Page Styles ===================== */
         body {
             font-family: 'Lato', sans-serif;
             max-width: 800px;
@@ -13,11 +14,43 @@
             color: #333;
         }
 
+/* ===================== Main Content Wrapper ===================== */
+        .main-content {
+            margin-left: 220px;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+/* ===================== Header & Tagline ===================== */
         h1 {
             text-align: center;
             color: #225669; /*NWVIT Mountian Blue*/
         }
 
+        p.tagline {
+            text-align: center;
+            color: #666;
+            margin-top: -0.5rem;
+            font-size: 1rem;
+        }
+/* ===================== Logo Styling ===================== */
+        #logo-wrapper {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        #nwvit-logo {
+            max-width: 120px; /*reduced from 180*/
+            height: auto;
+            margin-top: 1rem;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #nwvit-logo:hover {
+            transform: scale(1.15);
+        }
+            
+/* ===================== Form Elements ===================== */        
         label {
             font-weight: bold;
             display: block;
@@ -39,6 +72,7 @@
             display: block;
         }
 
+/* ===================== Buttons ===================== */
         button {
             padding: 10px 20px;
             margin-right: 1rem;
@@ -53,23 +87,8 @@
         button:hover {
             background-color: #34495e;
         }
-        
-        #logo-wrapper {
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
 
-        #nwvit-logo {
-            max-width: 180px;
-            height: auto;
-            margin-top: 1rem;
-            transition: transform 0.2s ease-in-out;
-        }
-
-        #nwvit-logo:hover {
-            transform: scale(1.05);
-        }
-
+/* ===================== Resume Drop Zone ===================== */        
         #resumeDropZone {
             width: 100%;
             box-sizing: border-box;
@@ -79,6 +98,7 @@
             border: none;
         }
 
+/* ===================== Results Box ===================== */        
         #results {
             width: 100%;
             box-sizing: border-box;
@@ -89,14 +109,7 @@
             border-radius: 6px;
         }
 
-        p.tagline {
-            text-align: center;
-            color: #666;
-            margin-top: -0.5rem;
-            font-size: 1rem;
-        }
-
-/* ===================== Sidebar Navigation Styles ===================== */
+/* ===================== Sidebar Navigation ===================== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -148,9 +161,6 @@
         .icon {
             font-size: 1.2rem;
         }
-
-        
-
     </style>
 
     <meta charset="UTF-8">
@@ -158,7 +168,8 @@
     <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
+    
+    
 
 </head>
 
@@ -174,111 +185,103 @@
     </ul>
  </div>
 
+ <!-- ===================== Logo & Tagline ===================== -->
 <div id="logo-wrapper">
     <a href="https://www.nwvit.org/" target="_blank">
-        <img src="images/nwvit-logo-dark.png" alt="NWVIT Logo" id="nwvit-logo">
+        <img src="Logo.png" alt="NWVIT Logo" id="nwvit-logo">
     </a>
 </div>
 
-<h1>NWVIT Resume Compatibility Tool</h1>
+<h1>Resume Compatibility Tool</h1>
 <p class="tagline">Built by Veterans, for Veterans</p>
 
-<!-- Resume Drag-and-Drop Zone -->
+<!-- ===================== Resume Input Area ===================== -->
  <div id="resumeDropZone">
     <p><strong>Drag & Drop Or Upload Your Resume</strong></p>
-
-<!--<label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>-->
     <input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
-
-<!--<label for="resume">Upload or Paste Your Resume</label><br>-->
     <textarea id="resume" placeholder="Upload, Drop, or Paste Resume Here..." autofocus></textarea>
  </div>
-<!--
-<label for "jdFile">Upload Job Description (.txt, .docx, .pdf)</label><br>
-<input type="file" id="jdFile" accept=".txt, .docx, .pdf"><br><br>
---> 
+
+<!-- ===================== Job Description Box ===================== -->
 <label for="jd" style="display: block; text-align: left; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
 <textarea id="jd" placeholder="Paste job description here..."></textarea>
 
+<!-- ===================== Action Buttons ===================== -->
 <button onclick="analyze()">Analyze</button>
 <button onclick="resetFields()">Reset</button>
 
+<!-- ===================== Output Area ===================== -->
 <div id="results"></div>
 
 <script>
-// Analyze the resume and job description by sending them to the FastAPI backend
-    async function analyze() {
-// Get the user input from the resume and job description
-        const resumeText = document.getElementById('resume').value;
-        const jobText = document.getElementById('jd').value;
-// Send a POST request to the backend / analyze endpoint
-        const response = await fetch('http://127.0.0.1:8000/analyze', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json' }, 
-            body: JSON.stringify({
-                resume_text: resumeText,
-                job_description: jobText
-            })
-        });
 
-        const data = await response.json();
-// Display the results
-        document.getElementById('results').innerHTML = `
-            <h2>Results</h2>
-            <p><strong>Score:</strong> ${data.score}%</p>
-            <p><strong>Feedback:</strong> ${data.feedback}</p>
-            <p><strong>Missing Keywords:</strong> ${data.missing_keywords.join(', ')}</p>
-        `;
-    }
+// ===================== Resume Analyzer Function =====================
+async function analyze() {
+    const resumeText = document.getElementById('resume').value;
+    const jobText = document.getElementById('jd').value;
 
-// Clear all fields and reset form
-    function resetFields() {
-        document.getElementById('resume').value = "";
-        document.getElementById('jd').value = "";
-        document.getElementById('results').innerHTML = "";
-// Clear file inputs
-        document.getElementById('resumeFile').value = "";
-        document.getElementById('jdFile').value = "";
-// Refocus to resume box
-        document.getElementById('resume').focus();
-    }
-
-// Handle drag-and-drop resume file upload
-    const resumeDropZone = document.getElementById('resumeDropZone');
-
-    resumeDropZone.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        resumeDropZone.style.backgroundColor = ''; //Provides Visual Feedback
+    const response = await fetch('http://127.0.0.1:8000/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json' }, 
+        body: JSON.stringify({
+            resume_text: resumeText,
+            job_description: jobText
+        })
     });
 
-    resumeDropZone.addEventListener('dragleave', function () {
-        resumeDropZone.style.backgroundColor = ''; //Resets Background
-    });
+    const data = await response.json();
 
-    resumeDropZone.addEventListener('drop', function (e) {
-        e.preventDefault();
-        resumeDropZone.style.backgroundColor = '';
+    document.getElementById('results').innerHTML = `
+        <h2>Results</h2>
+        <p><strong>Score:</strong> ${data.score}%</p>
+        <p><strong>Feedback:</strong> ${data.feedback}</p>
+        <p><strong>Missing Keywords:</strong> ${data.missing_keywords.join(', ')}</p>
+    `;
+}
 
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
+// ===================== Reset Tool State =====================
+function resetFields() {
+    document.getElementById('resume').value = "";
+    document.getElementById('jd').value = "";
+    document.getElementById('results').innerHTML = "";
+    document.getElementById('resumeFile').value = "";
+    //document.getElementById('jdFile').value = ""; // Commented out: Not Being Used
+document.getElementById('resume').focus();
+}
 
-// Pass Dropped File to the Resume File Handler
-        document.getElementById('resumeFile').files = e.dataTransfer.files;
+// ===================== Drag & Drop Functionality =====================
+const resumeDropZone = document.getElementById('resumeDropZone');
+
+resumeDropZone.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    resumeDropZone.style.backgroundColor = ''; //Provides Visual Feedback: Not Being Used
+});
+
+resumeDropZone.addEventListener('dragleave', function () {
+    resumeDropZone.style.backgroundColor = '';
+});
+
+resumeDropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    resumeDropZone.style.backgroundColor = '';
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    document.getElementById('resumeFile').files = e.dataTransfer.files;
         
-// Trigger "Change Event" to reuse existing logic
-        const changeEvent = new Event('change');
-        document.getElementById('resumeFile').dispatchEvent(changeEvent);
-    });
+    const changeEvent = new Event('change');
+    document.getElementById('resumeFile').dispatchEvent(changeEvent);
+});
 
-// Listen for file uploads to the resume file input
-    document.getElementById('resumeFile').addEventListener('change', function (){
-        const file = this.files[0];
-        if (!file) return;
-// Get the file extention (e.g. '.txt', '.docx', '.pdf')
+// ===================== File Upload Handler =====================
+document.getElementById('resumeFile').addEventListener('change', function (){
+    const file = this.files[0];
+    if (!file) return;
+
        const ext = file.name.split('.').pop().toLowerCase();
 
        if (ext == "txt") {
-// If file is plain text, read it using FileReader
         const reader = new FileReader();
         reader.onload = function (e) {
             const text = e.target.result;
@@ -286,8 +289,7 @@
         
         };
         reader.readAsText(file);
-       } else if (ext === "docx") {
-// If file is .docx, convert to text using Mammoth
+    } else if (ext === "docx") {
         file.arrayBuffer().then(function (buffer) {
             mammoth.extractRawText({arrayBuffer: buffer})
                 .then(function (result) {
@@ -298,7 +300,6 @@
                 });
         });
     } else if (ext === "pdf") {
-        // PDF resume
         const reader = new FileReader();
         reader.onload = function (e) {
             const typedarray = new Uint8Array(e.target.result);
@@ -324,69 +325,69 @@
         };
         reader.readAsArrayBuffer(file);
         
-       } else {
-// Unsupported file type message
+    } else {
         alert("Unsupported file type. Please upload a .txt or .docx file.");
-       }
-    });
-/* Job Description file upload option
+    }
+});
 
-//Listen for file uploads to the job description file input
-    document.getElementById('jdFile').addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) return;
+/*
+// ===================== Job Description Upload Support =====================
+// (Currently Disabled for Simplicity. Uncomment is Re-Enabled in Future)
 
-// Get the file extension (e.g. .txt, .docx, .pdf)
-        const ext = file.name.split('.').pop().toLowerCase();
 
-        if (ext === "txt") {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const text = e.target.result;
-                document.getElementById('jd').value = text;
-            };
-            reader.readAsText(file);
-        } else if (ext === "docx") {
-// Mammoth conversion
-            file.arrayBuffer().then(function (buffer){
-                mammoth.extractRawText({ arrayBuffer: buffer })
-                    .then(function (result) {
-                        document.getElementById('jd').value = result.value;
-                    })
-                    .catch(function (err){
-                        alert("Error reading file: " + err.message);
-                    })
-            });
-        } else if (ext === "pdf") {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const typedarray = new Uint8Array(e.target.result);
+document.getElementById('jdFile').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
 
-                pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf) {
-                    let textPromises = [];
+    const ext = file.name.split('.').pop().toLowerCase();
 
-                    for(let i = 1; i <= pdf.numPages; i++) {
-                        textPromises.push(
-                            pdf.getPage(i).then(function (page) {
-                                return page.getTextContent().then(function (content) {
-                                    return content.items.map(item => item.str).join(" ");
-                                });
-                            })
-                        );
-                    }
+    if (ext === "txt") {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const text = e.target.result;
+            document.getElementById('jd').value = text;
+        };
+        reader.readAsText(file);
+    } else if (ext === "docx") {
+        file.arrayBuffer().then(function (buffer){
+            mammoth.extractRawText({ arrayBuffer: buffer })
+                .then(function (result) {
+                    document.getElementById('jd').value = result.value;
+                })
+                .catch(function (err){
+                    alert("Error reading file: " + err.message);
+                })
+        });
+    } else if (ext === "pdf") {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const typedarray = new Uint8Array(e.target.result);
+            pdfjsLib.getDocument({ data: typedarray }).promise.then(function (pdf) {
+                let textPromises = [];
 
-                    Promise.all(textPromises).then(function (pagesText){
-                        const fullText = pagesText.join("\n\n");
-                        document.getElementById('jd').value = fullText;
-                    });
+                for(let i = 1; i <= pdf.numPages; i++) {
+                    textPromises.push(
+                        pdf.getPage(i).then(function (page) {
+                            return page.getTextContent().then(function (content) {
+                                return content.items.map(item => item.str).join(" ");
+                            });
+                        })
+                    );
+                }
+
+                Promise.all(textPromises).then(function (pagesText){
+                    const fullText = pagesText.join("\n\n");
+                    document.getElementById('jd').value = fullText;
                 });
-            };
-            reader.readAsArrayBuffer(file);
-        } else {
-// Unsupported File Type
-            alert("Unsupported file type. Please upload a .txt, .docx, or .pdf file.");
-        }
-    });
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert("Unsupported file type. Please upload a .txt, .docx, or .pdf file.");
+    }
+});
+
+// ===================== End of Job Description Upload Support =====================
 */
 
 

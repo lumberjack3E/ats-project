@@ -46,9 +46,20 @@
 
         button:hover {
             background-color: #34495e;
-        } 
+        }
+        
+        #resumeDropZone {
+            width: 100%;
+            box-sizing: border-box;
+            border: none;
+            padding: 0;
+            text-align: center;
+            margin: 0 0 1rem 0;
+        }
 
         #results {
+            width: 100%;
+            box-sizing: border-box;
             margin-top: 2rem;
             background: #ffffff;
             padding: 1rem;
@@ -68,21 +79,21 @@
 <h1>NWVIT Resume Compatibility Tool</h1>
 
 <!-- Resume Drag-and-Drop Zone -->
- <div id="resumeDropZone" style="border: 2px dashed #aaa; padding: 1rem; text-align: center; margin-bottom: 1rem;">
-    <p>Drag & Drop Your Resume Here, or Use the Upload Button Below</p>
+ <div id="resumeDropZone">
+    <p><strong>Drag & Drop Or Upload Your Resume</strong></p>
 
-    <label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>
+<!--<label for="resumeFile">Upload Resume (.txt, .docx, .pdf)</label><br>-->
     <input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
 
-    <label for="resume">Upload of Paste Your Resume</label><br>
-    <textarea id="resume" placeholder="Upload or Paste Resume Here..." autofocus></textarea>
+<!--<label for="resume">Upload or Paste Your Resume</label><br>-->
+    <textarea id="resume" placeholder="Upload, Drop, or Paste Resume Here..." autofocus></textarea>
  </div>
-
+<!--
 <label for "jdFile">Upload Job Description (.txt, .docx, .pdf)</label><br>
 <input type="file" id="jdFile" accept=".txt, .docx, .pdf"><br><br>
-
-<label for="jd">Upload or Paste the Job Description</label><br>
-<textarea id="jd" placeholder="Upload or paste job description here..."></textarea>
+--> 
+<label for="jd" style="display: block; text-align: center; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
+<textarea id="jd" placeholder="Paste job description here..."></textarea>
 
 <button onclick="analyze()">Analyze</button>
 <button onclick="resetFields()">Reset</button>
@@ -90,7 +101,7 @@
 <div id="results"></div>
 
 <script>
-// Analyze th resume and job description by sending them to the FastAPI backend
+// Analyze the resume and job description by sending them to the FastAPI backend
     async function analyze() {
 // Get the user input from the resume and job description
         const resumeText = document.getElementById('resume').value;
@@ -132,7 +143,7 @@
 
     resumeDropZone.addEventListener('dragover', function (e) {
         e.preventDefault();
-        resumeDropZone.style.backgroundColor = '#e0f7fa'; //Provides Visual Feedback
+        resumeDropZone.style.backgroundColor = ''; //Provides Visual Feedback
     });
 
     resumeDropZone.addEventListener('dragleave', function () {
@@ -213,6 +224,8 @@
         alert("Unsupported file type. Please upload a .txt or .docx file.");
        }
     });
+/* Job Description file upload option
+
 //Listen for file uploads to the job description file input
     document.getElementById('jdFile').addEventListener('change', function () {
         const file = this.files[0];
@@ -269,6 +282,8 @@
             alert("Unsupported file type. Please upload a .txt, .docx, or .pdf file.");
         }
     });
+*/
+
 
 </script>
 </body>

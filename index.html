@@ -71,6 +71,24 @@
             color: #333;
             box-sizing: border-box;
             display: block;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            height: 40px;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            font-style: italic;
+            color: #333;
+            box-sizing: border-box;
+            display: block;
+            border-radius: 6px;
+            border: 1px solid #ccc;
         }
 
 /* ===================== Buttons ===================== */
@@ -225,13 +243,6 @@
 <h1>Resume Compatibility Tool</h1>
 <p class="tagline">Built by Veterans, for Veterans</p>
 
-
-<!-- ===================== Job Title Search Box ===================== -->
-<div id="jobSearchBox" style="text-align: center; margin-bottom: 1rem;">
-    <input type="text" id="jobTitleSearch" placeholder="Enter a job title (e.g. SOC Analyst)" style="padding: 0.5rem; width: 60%; font-size: 1rem;">
-    <button onclick="populateJD()">Suggest Keywords</button>
-</div>
-
 <!-- ===================== Top User Panel ===================== -->
 <div class="user-panel">
     <img src="user-placeholder.png" alt="User Icon" class="user-icon">
@@ -248,12 +259,12 @@
 <!-- ===================== Job Title Search Input ===================== -->
 <div style="margin-bottom: 1rem;">
     <label for="jobSearch" style="font-weight: bold;">Search for Job Title</label>
-    <input type="text" id="jobSearch" placeholder="e.g. SOC Analyst" style="width: 100%; padding: 0.5rem; font-size: 1rem;">
+    <input type="text" id="jobSearch" placeholder="e.g. SOC Analyst" class="full-width-input">
     <button onclick="fetchJDTemplate()" style="margin-top: 0.5rem;">Suggest Keywords</button>
 </div>
 
 <!-- ===================== Job Description Box ===================== -->
-<label for="jd" style="display: block; text-align: left; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
+<label for="jd" style="display: block; text-align: left; font-weight: bold; margin-top: 1rem;">Paste or Generate Job Description</label><br>
 <textarea id="jd" placeholder="Paste job description here..."></textarea>
 
 <!-- ===================== Action Buttons ===================== -->
@@ -296,7 +307,8 @@ function resetFields() {
     document.getElementById('results').innerHTML = "";
     document.getElementById('resumeFile').value = "";
     //document.getElementById('jdFile').value = ""; // Commented out: Not Being Used
-document.getElementById('resume').focus();
+    document.getElementById('resume').focus();
+    document.getElementById('jobSearch').value = "";
 }
 
 // ===================== Drag & Drop Functionality =====================
@@ -459,6 +471,20 @@ function fetchJDTemplate() {
         alert("No template found for that title");
     }
 }
+
+// ===================== Trigger for "fetchJDTemplate" on Enter Key =====================
+document.addEventListener("DOMContentLoaded", function () {
+    const jobSearchInput = document.getElementById("jobSearch");
+    if (jobSearchInput) {
+        jobSearchInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                fetchJDTemplate();
+            }
+        });
+    }
+});
+
 </script>
 </body>
 </html>

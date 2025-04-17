@@ -33,6 +33,7 @@
             margin-top: -0.5rem;
             font-size: 1rem;
         }
+
 /* ===================== Logo Styling ===================== */
         #logo-wrapper {
             text-align: center;
@@ -161,6 +162,35 @@
         .icon {
             font-size: 1.2rem;
         }
+
+/* ===================== User Panel ===================== */
+        .user-panel {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #fff;
+            padding: 0.4rem 0.75rem;
+            border-radius: 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            z-index: 1001;
+        }
+
+        .user-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
     </style>
 
     <meta charset="UTF-8">
@@ -185,7 +215,7 @@
     </ul>
  </div>
 
- <!-- ===================== Logo & Tagline ===================== -->
+<!-- ===================== Logo & Tagline ===================== -->
 <div id="logo-wrapper">
     <a href="https://www.nwvit.org/" target="_blank">
         <img src="Logo.png" alt="NWVIT Logo" id="nwvit-logo">
@@ -195,12 +225,32 @@
 <h1>Resume Compatibility Tool</h1>
 <p class="tagline">Built by Veterans, for Veterans</p>
 
+
+<!-- ===================== Job Title Search Box ===================== -->
+<div id="jobSearchBox" style="text-align: center; margin-bottom: 1rem;">
+    <input type="text" id="jobTitleSearch" placeholder="Enter a job title (e.g. SOC Analyst)" style="padding: 0.5rem; width: 60%; font-size: 1rem;">
+    <button onclick="populateJD()">Suggest Keywords</button>
+</div>
+
+<!-- ===================== Top User Panel ===================== -->
+<div class="user-panel">
+    <img src="user-placeholder.png" alt="User Icon" class="user-icon">
+    <span class="user-name">Admin</span>
+</div>
+
 <!-- ===================== Resume Input Area ===================== -->
  <div id="resumeDropZone">
     <p><strong>Drag & Drop Or Upload Your Resume</strong></p>
     <input type="file" id="resumeFile" accept=".txt, .docx, .pdf"><br><br>
     <textarea id="resume" placeholder="Upload, Drop, or Paste Resume Here..." autofocus></textarea>
  </div>
+
+<!-- ===================== Job Title Search Input ===================== -->
+<div style="margin-bottom: 1rem;">
+    <label for="jobSearch" style="font-weight: bold;">Search for Job Title</label>
+    <input type="text" id="jobSearch" placeholder="e.g. SOC Analyst" style="width: 100%; padding: 0.5rem; font-size: 1rem;">
+    <button onclick="fetchJDTemplate()" style="margin-top: 0.5rem;">Suggest Keywords</button>
+</div>
 
 <!-- ===================== Job Description Box ===================== -->
 <label for="jd" style="display: block; text-align: left; font-weight: bold; margin-top: 1rem;">Paste the Job Description</label><br>
@@ -390,7 +440,25 @@ document.getElementById('jdFile').addEventListener('change', function () {
 // ===================== End of Job Description Upload Support =====================
 */
 
+// ===================== Fetch JD Keywords from Search =====================
+function fetchJDTemplate() {
+    const jobTitle = document.getElementById('jobSearch').value.trim().toLowerCase();
 
+    const templates = {
+        "soc analyst": `Monitor SIEM dashboards for alerts\nInvestigate incidents and triage security events\nWork with Splunk, CrowdStrike, or SentinelOne\nEscalate critical findings to senior analysts\nAnalyze logs and system activity\nKnowledge of MITRE ATT&CK framework`,
+        "security engineer": `Design and implement secure network infrastructure\nPerform risk assessments and threat modeling\nCollaborate with DevOps teams on secure CI/CD\nDeploy and maintain firewalls, IDS/IPS\nPerform system hardening and vulnerability scanning\nWork with tools like Nessus, Nmap, Wireshark`,
+        "penetration tester": `Conduct internal and external penetration tests\nExploit known vulnerabilities and misconfigurations\nCreate comprehensive risk reports with mitigation steps\nUse tools such as Metasploit, Burp Suite, and Kali Linux\nSimulate phishing or red team engagements\nExperience with web app, network, and wireless testing`
+        // More job roles to come later!
+    };
+
+    const suggestion = templates[jobTitle];
+
+    if (suggestion) {
+        document.getElementById('jd').value = suggestion;
+    } else {
+        alert("No template found for that title");
+    }
+}
 </script>
 </body>
 </html>
